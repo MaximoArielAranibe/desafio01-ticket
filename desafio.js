@@ -1,74 +1,123 @@
-class TicketManager {
-    #precioBaseDeGanancia
+class ProductManager {
     constructor(){
-        this.events = []
-        this.#precioBaseDeGanancia = 0.15
+        this.products = []
     }
 
-    getEvents = () => {return this.events}
+    getProducts = () => { return this.products }
 
-    //Consigue el siguiente ID
-    getNextId = () => {
-        const count = this.events.length
-        if (count == 0) return 1
+    generateID = () => {
+        const count = this.products.length
 
-        const lastEvent = this.events[count-1]
-        const lastID = lastEvent.id
+        if (count == 0) return 1;
+
+        const lastProduct = this.products[count - 1]
+        const lastID = lastProduct.id
         const nextID = lastID + 1
 
         return nextID
-        //const nextID = (count > 0) ? this.products[amount - 1].id + 1 : 1;
     }
 
-    addEvent = (name, place, price, capacity, date) => {
-        const id = this.getNextId()
+    
+    validateFields = (title, description, price, thumbnail, stock, code) =>{
+        if((title == undefined || title == "") || (description == undefined || description == "") || (price == undefined ||price == "") || (thumbnail== undefined || thumbnail== "") || (code == undefined) || (stock == undefined || stock == "")){
+            console.log("ERROR AL AGREGAR PRODUCTO: TODOS LOS CAMPOS SON OBLIGATORIOS")
+            return false;
+        }else{
+            return true;
+        }
+    }
 
-        const event = {
-            name,
-            place,
-            priceBase: price,
-            price: price * (1 + this.#precioBaseDeGanancia),
-            capacity: capacity ?? 50,
-            date: date ?? new Date().toLocaleDateString(),
-            participants: []
+    duplicateCode = (code) => { 
+        const product = this.products.find(product => product.code === code)
+        if(product == undefined){
+            return true;
+        } else if(product != undefined){ 
+            console.log(`ERROR: El codigo "${code}" no puede repetirse`);
+            return false;
+        }
+    }
+
+    addProduct = (title, description, price, thumbnail, stock, code) => {
+        const id = this.generateID()
+
+        const product = {
+            id,
+            title,  
+            description,
+            price,
+            thumbnail,
+            stock,
+            code
         }
 
-        this.events.push(event)
-    }
-
-    addParticipant = (eventID, userID) => {
-        const event = this.events.find(event => event.id == eventID)
-        if(event == undefined) return -1
-
-        if(!event.participants.includes(userID)) {
-            event.participants.push(userID)
-            return 1
+        if(this.duplicateCode(code) && this.validateFields(title, description, price, thumbnail, stock, code)){
+            this.products.push(product)
         }
-
-        return -1
-    }
-
-    ponerEventoEnGira = (eventID, placeNew, dateNew) => {
-        const event = this.events.find(event => event.id == eventID)
-        const { name, price, capacity } = event
-        log
-        
-        this.addEvent(name, placeNew, price, capacity, dateNew)
-        }
-
     }
 
 
-const manager = new TicketManager()
-manager.addEvent('Bad Bunny', "Argentina", 500, null, null)
-manager.addEvent("AC DC", "Miami", 1000, null, null)
+    getProductByID = (id) => {
+        const productFound = this.products.find(product => product.id === id)
+        return productFound || console.log(`Not Found`)
+    }
+}
 
-manager.addParticipant(1, 333)
-manager.addParticipant(1, 444)
-manager.addParticipant(1, 555)
-manager.addParticipant(1, "German")
-manager.addParticipant(1, "Facundo")
+const manager = new ProductManager()
+
+getProducts = () => {return this.products}; //muestra el array sin productos
 
 
-manager.ponerEventoEnGira(1,"Buenos Aires", null)
-console.log(manager.events);
+manager.addProduct(
+    "producto prueba",
+    "Este es un producto prueba",
+    200,
+    "Sin imagen",
+    "abc123",
+    25
+)
+
+//productos a agregar
+manager.addProduct(
+    "Iphone 13",
+    "Apple",
+    140000,
+    "N/A",
+    5,
+    "555"
+)
+
+manager.addProduct(
+    "PlayStation 4",
+    "Sony Entertainment",
+    100000,
+    "N/A",
+    3,
+    "def456"
+)
+
+
+//Arroja error porque le falta el title
+manager.addProduct(
+    "Producto sin titulo",
+    12345,
+    "N/A",
+    35,
+    "jkl123"
+)
+
+//Tiene code repetido , por lo tanto no se agrega
+manager.addProduct(
+    "producto 3",
+    "descripción 3",
+    123,
+    "N/A",
+    35,
+    "ghi789"
+)
+
+console.log(manager.getProducts()); //Mostrar los productos en consola
+
+console.log("----------------------------")
+console.log("PRODUCTO SELECCIONADO:", manager.getProductByID(2)); //Traer producto por id , en este caso el 2
+console.log("----------------------------")
+console.log(manager.getProductByID(6)); //Error porque el id llamado no existe
