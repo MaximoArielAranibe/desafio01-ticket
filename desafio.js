@@ -1,3 +1,7 @@
+import express from 'express'
+let app = express();
+//Mañana lo termino perdon 
+
 class ProductManager {
     constructor(){
         this.products = []
@@ -19,7 +23,7 @@ class ProductManager {
 
     
     validateFields = (title, description, price, thumbnail, stock, code) =>{
-        if((title == undefined || title == "") || (description == undefined || description == "") || (price == undefined ||price == "") || (thumbnail== undefined || thumbnail== "") || (code == undefined) || (stock == undefined || stock == "")){
+        if((title == undefined || title == "") || (description == undefined || description == "") || (price == undefined || price == "") || (thumbnail== undefined || thumbnail== "") || (code == undefined) || (stock == undefined || stock == "")){
             console.log("ERROR AL AGREGAR PRODUCTO: TODOS LOS CAMPOS SON OBLIGATORIOS")
             return false;
         }else{
